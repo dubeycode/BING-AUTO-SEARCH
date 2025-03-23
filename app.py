@@ -9,14 +9,17 @@ import os
 app = Flask(__name__)
 
 # Function to get a headless Selenium driver
+import undetected_chromedriver as uc
+
 def get_driver():
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
+    chrome_options = uc.ChromeOptions()
+    chrome_options.headless = True
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
-    driver = webdriver.Chrome(options=chrome_options)  
+    driver = uc.Chrome(options=chrome_options)  # Use undetected chromedriver
     return driver
+
 
 
 # Function to log in and save cookies
