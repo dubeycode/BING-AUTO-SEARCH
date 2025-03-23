@@ -12,15 +12,14 @@ app = Flask(__name__)
 # Function to get a headless Selenium driver
 def get_driver():
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # No UI mode
+    chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    
-    # Check for ChromeDriver path
-    chromedriver_path = os.environ.get("CHROMEDRIVER_PATH", "/usr/bin/chromedriver")
-    service = Service(chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+
+    # Use ChromeDriver without specifying a fixed path
+    driver = webdriver.Chrome(options=chrome_options)  
     return driver
+
 
 # Function to log in and save cookies
 def login_and_save_cookies(email, password):
