@@ -12,12 +12,15 @@ app = Flask(__name__)
 import undetected_chromedriver as uc
 
 def get_driver():
-    chrome_options = uc.ChromeOptions()
-    chrome_options.headless = True
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    
+    # Manually set Chrome binary path (for Render)
+    chrome_options.binary_location = "/opt/render/project/chromedriver/chrome"
 
-    driver = uc.Chrome(options=chrome_options)  # Use undetected chromedriver
+    driver = webdriver.Chrome(options=chrome_options)
     return driver
 
 
