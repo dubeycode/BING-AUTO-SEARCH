@@ -1,30 +1,41 @@
 from flask import Flask, render_template, request, redirect, url_for
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 import time
 import pickle
 import pandas as pd
 
 app = Flask(__name__)
 
-driver = None  # Global driver instance to keep session active
+# Function to get a headless Selenium driver
+def get_driver():
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # No UI mode
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+
+    service = Service("/usr/bin/chromedriver")  # Default path on Render
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    return driver
 
 # Function to log in and save cookies
 def login_and_save_cookies(email, password):
-    global driver
-    options = webdriver.ChromeOptions()
-    driver = webdriver.Chrome(options=options)
+    driver = get_driver()  # Use new driver setup
+
     driver.get("https://login.live.com/")
     time.sleep(3)
 
-    driver.find_element(By.NAME, "loginfmt").send_keys(email + Keys.RETURN)
+    driver.find_element("name", "loginfmt").send_keys(email)
+    driver.find_element("name", "loginfmt").send_keys("\n")
     time.sleep(3)
-    driver.find_element(By.NAME, "passwd").send_keys(password + Keys.RETURN)
+
+    driver.find_element("name", "passwd").send_keys(password)
+    driver.find_element("name", "passwd").send_keys("\n")
     time.sleep(5)
 
     try:
-        driver.find_element(By.ID, "idSIButton9").click()
+        driver.find_element("id", "idSIButton9").click()
         time.sleep(3)
     except:
         pass
@@ -32,19 +43,19 @@ def login_and_save_cookies(email, password):
     with open("cookies.pkl", "wb") as f:
         pickle.dump(driver.get_cookies(), f)
 
+    driver.quit()
+
 # Function to perform Bing search
 def bing_search(queries):
-    global driver
-    if not driver:
-        options = webdriver.ChromeOptions()
-        driver = webdriver.Chrome(options=options)
-        driver.get("https://www.bing.com/")
-        time.sleep(2)
+    driver = get_driver()  # Use new driver setup
 
-        with open("cookies.pkl", "rb") as f:
-            cookies = pickle.load(f)
-            for cookie in cookies:
-                driver.add_cookie(cookie)
+    driver.get("https://www.bing.com/")
+    time.sleep(2)
+
+    with open("cookies.pkl", "rb") as f:
+        cookies = pickle.load(f)
+        for cookie in cookies:
+            driver.add_cookie(cookie)
 
     driver.get("https://www.bing.com/news/")
     time.sleep(2)
@@ -55,15 +66,17 @@ def bing_search(queries):
         driver.get("https://www.bing.com/news/")
         time.sleep(2)
 
-        search_box = driver.find_element(By.NAME, "q")
-        search_box.send_keys(query + Keys.RETURN)
+        search_box = driver.find_element("name", "q")
+        search_box.send_keys(query)
+        search_box.send_keys("\n")
         time.sleep(3)
 
-        results = driver.find_elements(By.CSS_SELECTOR, "a.title")[:5]
+        results = driver.find_elements("css selector", "a.title")[:5]
 
         for result in results:
             results_list.append({"query": query, "title": result.text, "url": result.get_attribute("href")})
 
+    driver.quit()
     return results_list
 
 @app.route("/", methods=["GET", "POST"])
