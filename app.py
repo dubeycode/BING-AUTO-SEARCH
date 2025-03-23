@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 import time
 import pickle
@@ -16,7 +15,6 @@ def get_driver():
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
-    # Use ChromeDriver without specifying a fixed path
     driver = webdriver.Chrome(options=chrome_options)  
     return driver
 
@@ -52,7 +50,6 @@ def bing_search(queries):
     driver.get("https://www.bing.com/")
     time.sleep(2)
     
-    # Load cookies if available
     if os.path.exists("cookies.pkl"):
         with open("cookies.pkl", "rb") as f:
             cookies = pickle.load(f)
@@ -103,4 +100,5 @@ def search():
     return render_template("search.html")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
+    port = int(os.environ.get("PORT", 10000))  # Use Render's assigned port
+    app.run(host="0.0.0.0", port=port)
