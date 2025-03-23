@@ -90,7 +90,7 @@ def index():
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
-    if request.method == "POST"]:
+    if request.method == "POST":
         queries = []
         if "file" in request.files:
             file = request.files["file"]
