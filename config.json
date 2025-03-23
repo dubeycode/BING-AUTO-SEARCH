@@ -1,0 +1,20 @@
+{
+    "params":{
+      "local_server":"True",
+      "local_uri":"sqlite:///byteverse.db",
+      "prod_uri":"sqlite:///byteverse.db",
+      "tw_url":"https://x.com/Dube72281Satyam",
+      "git_hub_url":"https://github.com/dubeycode",
+      "linkdin_url":"https://www.linkedin.com/in/satyam-dubey-863a68304/",
+      "gmail_user":"dubeysatyam3635@gmail.com",
+      "gmail_pass":"xxxxxxxxxxxxxxxxx",
+      "blog":"Byteverse",
+      "about_text": "",
+      "no_of_posts":"2",
+      "admin_user":"xxxxxxxxxxxx",
+      "admin_password":"xxxxxxxxxx",
+      "uplod_location":"static/assets/img"
+      
+
+    }
+}
